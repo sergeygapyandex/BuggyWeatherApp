@@ -30,19 +30,26 @@ import androidx.compose.ui.viewinterop.AndroidView
 import ru.yandex.buggyweatherapp.model.WeatherData
 import ru.yandex.buggyweatherapp.utils.ImageLoader
 import ru.yandex.buggyweatherapp.utils.WeatherIconMapper
+import ru.yandex.buggyweatherapp.viewmodel.WeatherViewModel
 
 @Composable
-fun DetailedWeatherCard(weather: WeatherData) {
+fun DetailedWeatherCard(
+    weather: WeatherData,
+    viewModel: WeatherViewModel? = null
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val imageView = remember { ImageView(context) }
 
+    val backgroundColor = WeatherIconMapper.getBackgroundColor(weather.weatherId, weather.temperature)
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Column(
             modifier = Modifier
@@ -59,7 +66,7 @@ fun DetailedWeatherCard(weather: WeatherData) {
                     style = MaterialTheme.typography.headlineMedium
                 )
 
-                IconButton(onClick = { /* No-op, should use ViewModel */ }) {
+                IconButton(onClick = { viewModel?.toggleFavorite() }) {
                     Icon(
                         imageVector = if (weather.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Favorite"
@@ -71,6 +78,12 @@ fun DetailedWeatherCard(weather: WeatherData) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
+                Text(
+                    text = WeatherIconMapper.getWeatherIconResource(weather.icon),
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                
                 AndroidView(
                     factory = { imageView },
                     modifier = Modifier.size(50.dp)

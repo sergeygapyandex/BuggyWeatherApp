@@ -17,16 +17,17 @@ class WeatherViewModel : ViewModel() {
     private val weatherRepository = WeatherRepository()
     private var locationRepository: LocationRepository? = null
 
-    val weatherData = MutableLiveData<WeatherData>()
-    val currentLocation = MutableLiveData<Location>()
+    val weatherData = MutableLiveData<WeatherData?>()
+    val currentLocation = MutableLiveData<Location?>()
     val isLoading = MutableLiveData<Boolean>()
-    val error = MutableLiveData<String>()
+    val error = MutableLiveData<String?>()
     val cityName = MutableLiveData<String>()
 
     private var refreshJob: Job? = null
 
     fun initialize(context: Context) {
         locationRepository = LocationRepository(context.applicationContext)
+        locationRepository?.startLocationTracking()
         fetchCurrentLocationWeather()
         startAutoRefresh()
     }
@@ -48,6 +49,7 @@ class WeatherViewModel : ViewModel() {
             } else {
                 isLoading.value = false
                 error.value = "Unable to get current location"
+                currentLocation.value = null
             }
         }
     }

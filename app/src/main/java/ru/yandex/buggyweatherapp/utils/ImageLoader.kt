@@ -23,40 +23,6 @@ object ImageLoader {
         appContext = context.applicationContext
     }
 
-
-    suspend fun loadImage(url: String): Bitmap? {
-        return if (imageCache.containsKey(url)) {
-            imageCache[url]
-        } else {
-            try {
-
-                val bitmap = withContext(Dispatchers.IO) {
-                    val connection = URL(url).openConnection()
-                    connection.connectTimeout = 5000
-                    connection.readTimeout = 5000
-                    connection.connect()
-
-                    val inputStream = connection.getInputStream()
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    inputStream.close()
-
-                    if (bitmap != null) {
-                        if (imageCache.size >= MAX_CACHE_SIZE) {
-                            val firstKey = imageCache.keys.firstOrNull()
-                            firstKey?.let { imageCache.remove(it) }
-                        }
-                        imageCache[url] = bitmap
-                    }
-                    bitmap
-                }
-                bitmap
-            } catch (e: Exception) {
-
-                null
-            }
-        }
-    }
-
     suspend fun loadImageSync(url: String): Bitmap? {
         return withContext(Dispatchers.IO) {
             if (imageCache.containsKey(url)) {
@@ -80,7 +46,7 @@ object ImageLoader {
                         imageCache[url] = bitmap
                     }
                     bitmap
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     null
                 }
             }
@@ -99,6 +65,4 @@ object ImageLoader {
             }
         }
     }
-
-
 }

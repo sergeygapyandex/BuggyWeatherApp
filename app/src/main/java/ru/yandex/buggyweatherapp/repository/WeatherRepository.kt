@@ -65,15 +65,16 @@ class WeatherRepository {
     }
 
     private fun parseWeatherData(json: JsonObject, location: Location): WeatherData {
-
         val main = json.getAsJsonObject("main")
         val wind = json.getAsJsonObject("wind")
         val sys = json.getAsJsonObject("sys")
         val weather = json.getAsJsonArray("weather").get(0).asJsonObject
         val clouds = json.getAsJsonObject("clouds")
 
+        val cityName = json.get("name").asString ?: location.name ?: "Unknown"
+
         return WeatherData(
-            cityName = json.get("name").asString,
+            cityName = cityName,
             country = sys.get("country").asString,
             temperature = main.get("temp").asDouble,
             feelsLike = main.get("feels_like").asDouble,
@@ -85,6 +86,7 @@ class WeatherRepository {
             windDirection = if (wind.has("deg")) wind.get("deg").asInt else 0,
             description = weather.get("description").asString,
             icon = weather.get("icon").asString,
+            weatherId = weather.get("id").asInt,
             cloudiness = clouds.get("all").asInt,
             sunriseTime = sys.get("sunrise").asLong,
             sunsetTime = sys.get("sunset").asLong,

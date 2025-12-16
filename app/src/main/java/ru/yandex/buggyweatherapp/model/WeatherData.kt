@@ -13,6 +13,7 @@ data class WeatherData(
     val windDirection: Int,
     val description: String,
     val icon: String,
+    val weatherId: Int,
     val rain: Double? = null,
     val snow: Double? = null,
     val cloudiness: Int,
