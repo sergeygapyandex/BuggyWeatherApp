@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -54,9 +56,12 @@ fun WeatherScreen(viewModel: WeatherViewModel, modifier: Modifier = Modifier) {
     val error by viewModel.error.observeAsState()
     val cityName by viewModel.cityName.observeAsState("")
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -109,8 +114,9 @@ fun WeatherCard(
     onFavoriteClick: () -> Unit,
     onRefreshClick: () -> Unit
 ) {
-    val backgroundColor = WeatherIconMapper.getBackgroundColor(weather.weatherId, weather.temperature)
-    
+    val backgroundColor =
+        WeatherIconMapper.getBackgroundColor(weather.weatherId, weather.temperature)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
