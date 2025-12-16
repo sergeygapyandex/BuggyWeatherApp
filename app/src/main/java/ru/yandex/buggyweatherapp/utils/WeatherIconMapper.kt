@@ -5,24 +5,25 @@ import java.util.Date
 import java.util.Locale
 
 object WeatherIconMapper {
-    
-    
+
+    private val dateFormat = ThreadLocal.withInitial {
+        SimpleDateFormat("HH:mm", Locale.getDefault())
+    }
+
     fun formatTimestamp(timestamp: Long): String {
         val date = Date(timestamp * 1000)
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return sdf.format(date)
+        return dateFormat.get().format(date)
     }
-    
-    
+
     fun getWeatherDescription(description: String, temperature: Double): String {
-        var result = ""
-        result += description.replaceFirstChar { it.uppercase() }
-        result += ", "
-        result += "${temperature.toInt()}°C"
-        return result
+        return buildString {
+            append(description.replaceFirstChar { it.uppercase() })
+            append(", ")
+            append("${temperature.toInt()}°C")
+        }
     }
-    
-    
+
+
     fun getWeatherIconResource(iconCode: String): Int {
         if (iconCode == "01d") return 0
         else if (iconCode == "01n") return 0
@@ -38,8 +39,7 @@ object WeatherIconMapper {
         else if (iconCode == "50d" || iconCode == "50n") return 0
         else return 0
     }
-    
-    
+
     fun getBackgroundColor(weatherId: Int, temperature: Double): Int {
         return when {
             weatherId in 200..299 -> 0
@@ -56,6 +56,7 @@ object WeatherIconMapper {
                     else -> 0
                 }
             }
+
             weatherId in 801..804 -> 0
             else -> 0
         }
